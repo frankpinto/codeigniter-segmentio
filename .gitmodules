@@ -1,0 +1,3 @@
+[submodule "lib/analytics-php"]
+	path = lib/analytics-php
+	url = git@github.com:frankpinto/analytics-php.git
