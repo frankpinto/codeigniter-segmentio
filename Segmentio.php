@@ -7,6 +7,7 @@ class Segmentio
   public $CI;
   public $input;
   public $headers;
+  public $context;
 
   public $API_key;
   public $secret;
@@ -19,19 +20,41 @@ class Segmentio
     $segment_config = $this->CI->config->item('segmentio');
     $this->API_key = $segment_config['API_key'];
     $this->secret = $segment_config['secret'];
+    $this->context = array(
+      'userAgent' => $this->input->user_agent(),
+      'ip' => $this->input->ip_address()
+    );
 
     Analytics::init($this->secret);
   }
 
-  public function identify($user_id, $properties = array(), $additional_context = array())
+  public function identify($user_id, $traits = array(), $timestamp = NULL, $context = array())
   {
-    $context = array(
-      'userAgent' => $this->input->user_agent(),
-      'ip' => $this->input->ip_address()
-    );
-    $context = array_merge($context, $additional_context);
+    $phone = NULL;
+    if (isset($headers['X-MSISDN']) && $headers['X-MSISDN'])
+      $phone = $headers['X-MSISDN'];
+    elseif (isset($headers['X-WAP-Network-Client-MSISDN']) && $headers['X-WAP-Network-Client-MSISDN'])
+      $phone = $headers['X-WAP-Network-Client-MSISDN'];
+    
+    if (!isset($traits['phone']) && $phone)
+      $traits['phone'] = $phone;
 
-    Analytics::identify($user_id, $properties, null, $context);
+    $context = array_merge($this->context, $context);
+
+    Analytics::identify($user_id, $traits, $timestamp, $context);
+  }
+
+  public function track($user_id, $event, $properties = NULL, $timestamp = NULL, $context = array())
+  {
+    // Server-side page views
+    if ($event == 'Loaded a Page')
+      $properties = array(
+        'url' => $_SERVER['REQUEST_URI'],
+        'referer' => $_SERVER['HTTP_REFERER'],
+        'referrer' => $_SERVER['HTTP_REFERER']
+      );
+
+    Analytics::track($user_id, $event, $properties, $timestamp, $context);
   }
 }
 
