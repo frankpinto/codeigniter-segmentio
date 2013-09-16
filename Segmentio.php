@@ -48,11 +48,21 @@ class Segmentio
   {
     // Server-side page views
     if ($event == 'Loaded a Page')
-      $properties = array(
-        'url' => $_SERVER['REQUEST_URI'],
-        'referer' => $_SERVER['HTTP_REFERER'],
-        'referrer' => $_SERVER['HTTP_REFERER']
-      );
+    {
+      $additional_properties = array('url' => $_SERVER['REQUEST_URI']);
+      if (isset($_SERVER['HTTP_REFERER']))
+      {
+        $additional_properties['referer'] = $_SERVER['HTTP_REFERER'];
+        $additional_properties['referrer'] = $_SERVER['HTTP_REFERER'];
+      }
+
+      if ($properties)
+        $properties = array_merge($properties, $additional_properties);
+      else
+        $properties = $additional_properties;
+    }
+
+    $context = array_merge($this->context, $context);
 
     Analytics::track($user_id, $event, $properties, $timestamp, $context);
   }
