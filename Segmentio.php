@@ -18,6 +18,8 @@ class Segmentio
     $this->CI =& get_instance();
     $this->input =& $this->CI->input;
 
+    $this->headers = $this->input->request_headers();
+
     $this->track = $track;
     if (!$this->track)
       return;
@@ -37,11 +39,12 @@ class Segmentio
   {
     if ($this->track)
     {
+      error_log(print_r($this->headers, true));
       $phone = NULL;
-      if (isset($headers['X-MSISDN']) && $headers['X-MSISDN'])
-        $phone = $headers['X-MSISDN'];
-      elseif (isset($headers['X-WAP-Network-Client-MSISDN']) && $headers['X-WAP-Network-Client-MSISDN'])
-        $phone = $headers['X-WAP-Network-Client-MSISDN'];
+      if (isset($this->headers['X-MSISDN']) && $this->headers['X-MSISDN'])
+        $phone = $this->headers['X-MSISDN'];
+      elseif (isset($this->headers['X-WAP-Network-Client-MSISDN']) && $this->headers['X-WAP-Network-Client-MSISDN'])
+        $phone = $this->headers['X-WAP-Network-Client-MSISDN'];
       
       if (!isset($traits['phone']) && $phone)
         $traits['phone'] = $phone;
