@@ -13,8 +13,18 @@ class Segmentio
   public $secret;
   public $track;
 
-  public function __construct($track = TRUE)
+  public function __construct($params)
   {
+    if (isset($params[0]))
+      $track = $params[0];
+    else
+      $track = TRUE;
+
+    if (isset($params[1]))
+      $config = $params[1];
+    else
+      $track = NULL;
+
     $this->CI =& get_instance();
     $this->input =& $this->CI->input;
 
@@ -24,7 +34,10 @@ class Segmentio
     if (!$this->track)
       return;
 
-    $segment_config = $this->CI->config->item('segmentio');
+    if (empty($config))
+      $segment_config = $this->CI->config->item('segmentio');
+    else
+      $segment_config = $config;
     $this->API_key = $segment_config['API_key'];
     $this->secret = $segment_config['secret'];
     $this->context = array(
@@ -39,7 +52,6 @@ class Segmentio
   {
     if ($this->track)
     {
-      error_log(print_r($this->headers, true));
       $phone = NULL;
       if (isset($this->headers['X-MSISDN']) && $this->headers['X-MSISDN'])
         $phone = $this->headers['X-MSISDN'];
