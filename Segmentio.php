@@ -23,7 +23,7 @@ class Segmentio
     if (isset($params[1]))
       $config = $params[1];
     else
-      $track = NULL;
+      $config = NULL;
 
     $this->CI =& get_instance();
     $this->input =& $this->CI->input;
