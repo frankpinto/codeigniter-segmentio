@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(APPPATH."libraries/analytics-php/lib/Analytics.php");
 
@@ -52,15 +52,6 @@ class Segmentio
   {
     if ($this->track)
     {
-      $phone = NULL;
-      if (isset($this->headers['X-MSISDN']) && $this->headers['X-MSISDN'])
-        $phone = $this->headers['X-MSISDN'];
-      elseif (isset($this->headers['X-WAP-Network-Client-MSISDN']) && $this->headers['X-WAP-Network-Client-MSISDN'])
-        $phone = $this->headers['X-WAP-Network-Client-MSISDN'];
-      
-      if (!isset($traits['phone']) && $phone)
-        $traits['phone'] = $phone;
-
       $context = array_merge($this->context, $context);
 
       Analytics::identify($user_id, $traits, $timestamp, $context);
