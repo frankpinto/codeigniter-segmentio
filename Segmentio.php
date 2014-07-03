@@ -45,11 +45,13 @@ class Segmentio
       'ip' => $this->input->ip_address()
     );
 
-    Analytics::init($this->secret);
+    //Analytics::init($this->secret);
   }
 
   public function identify($user_id, $traits = array(), $timestamp = NULL, $context = array())
   {
+    return;
+
     if ($this->track)
     {
       $context = array_merge($this->context, $context);
@@ -60,6 +62,8 @@ class Segmentio
 
   public function track($user_id, $event, $properties = NULL, $timestamp = NULL, $context = array())
   {
+    return;
+
     if ($this->track)
     {
       // Server-side page views
